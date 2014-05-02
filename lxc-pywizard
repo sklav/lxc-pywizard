@@ -1,4 +1,12 @@
 #!/usr/bin/python
+
+##################################################################
+#                                                                #
+# Copyright (C) 2014 Nick Sklavenitis                            #
+# Work in progress it will break things you have been warned.    #
+#                                                                #
+##################################################################
+
 import platform
 import subprocess
 import argparse
