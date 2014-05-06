@@ -76,7 +76,6 @@ elif args.container == "True":
     exit ()
 
 else:
-#    print "Creating a", myvars['Dist'], "lxc container for",  myvars['Cache'], myvars['Arch'], "Architecture"
      print "got caught by else so consider running with --help\n"
      print "printing variables so you can debug if needed\n"
      print parser.parse_args()
