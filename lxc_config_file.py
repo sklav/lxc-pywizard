@@ -6,7 +6,7 @@ def lxc_config_file(fqdn, ram):
         f.write(lxc_config.format(fqdn=fqdn, ram=ram))
 
 lxc_config = """
-    lxc.utsname = fqdn
+    lxc.utsname = {fqdn}
     lxc.network.type = veth
     lxc.network.flags = up
     lxc.network.link = br0
@@ -31,7 +31,7 @@ lxc_config = """
     lxc.cgroup.devices.allow = c 5:0 rwm
     lxc.cgroup.devices.allow = c 4:0 rwm
     lxc.cgroup.devices.allow = c 4:1 rwm
-    # /dev/{,u}random
+    # /dev/urandom
     lxc.cgroup.devices.allow = c 1:9 rwm
     lxc.cgroup.devices.allow = c 1:8 rwm
     lxc.cgroup.devices.allow = c 136:* rwm
