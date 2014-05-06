@@ -34,14 +34,14 @@ parser.add_argument('--lvm', '-lvm', help='lvm help')
 parser.add_argument('--fqdn', '-fqdn', help='fqdn help')
 parser.add_argument('--size', '-size', help='disk size help')
 parser.add_argument('--ram', '-ram', help='ram size help')
+parser.add_argument('--fs', '-fs', action="store", default="ext4", help='filesystem type exmaple ext4')
 #parser.add_argument("help", help="The message to repeat", type=str)
-
 args = parser.parse_args()
 
 ###FUNCTIONS################################
 
-import lxc_config_file
-import lxc_inittab_file
+from lxc_config_file import lxc_config_file
+from lxc_inittab_file import lxc_inittab_file
 
 ############################################
 
@@ -65,14 +65,14 @@ elif args.container == "True":
     subprocess.call(['lvcreate', '-n', args.fqdn, '-L', args.size, myvars['VGName']])
     subprocess.call(['mkdir', '/var/lib/lxc/'+args.fqdn])
     f = open('/etc/fstab','a')
-    print >>f, "/dev/Default/"+args.fqdn, "/var/lib/lxc/"+args.fqdn, "ext4    noatime  0 2"
+    print >>f, "/dev/Default/"+args.fqdn, "/var/lib/lxc/"+args.fqdn, args.fs+"    noatime  0 2"
     f.close()
-    subprocess.call(['mkfs.ext4', '/dev/Default/'+args.fqdn])
+    subprocess.call(['mkfs.'+args.fs, '/dev/Default/'+args.fqdn])
     subprocess.call(['mount', '/var/lib/lxc/'+args.fqdn])
     subprocess.call(['mkdir', '/var/lib/lxc/'+args.fqdn+'/rootfs'])
     subprocess.call(['rsync', '-azA', '--numeric-ids', myvars['Cache'], '/var/lib/lxc/'+args.fqdn+'/rootfs/'])
-    lxc_config_file()
-    lxc_inittab_file()
+    lxc_config_file(args.fqdn, args.ram)
+    lxc_inittab_file(args.fqdn)
     exit ()
 
 else:
