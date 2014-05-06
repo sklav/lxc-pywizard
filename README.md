@@ -10,11 +10,24 @@ Information
 - you can launch debian Squeeze and Wheezy containers and they work ;)
 - You can select the arch you want example 32-bit or 64-bit
 - It creates containers using lvm to isolate your containers on their own partitions
-- you can easily add packages you want to you initial cache in the script
-- you can easily select what filesystem you want example ext4 and company
+- you can easily add packages you want to your initial cache in the script
+- Added option to define filesystem of choice example ext3/ext4/xfs etc..
 
 Future Additions (wish list)
 ============================
 - possibility to add profiles which can create finalized containers example web server etc...
 - possibility to use ssh key to connect to container
-- possibility to specify filesystem type on the fly, hard coded to ext4 at the moment but can be easily modified for your needs.
+- add some serious error checking to lxc-pywizard
+- add option so container has his hostname defined based on fqdn
+- add option to configure static ip from command line
+
+Example Usage
+=============
+create a cache for containers to use.
+lxc-pywizard --create
+
+Update the cache
+lxc-pywizard -u or --update
+
+launch a container by defining some basics
+./lxc-pywizard -cont --fqdn=test4.sklav --ram=512 --size=4G --fs=ext3
