@@ -42,6 +42,7 @@ args = parser.parse_args()
 
 from lxc_config_file import lxc_config_file
 from lxc_inittab_file import lxc_inittab_file
+from lxc_hostname_file import lxc_hostname_file
 
 ############################################
 
@@ -73,9 +74,11 @@ elif args.container == "True":
     subprocess.call(['rsync', '-azA', '--numeric-ids', myvars['Cache'], '/var/lib/lxc/'+args.fqdn+'/rootfs/'])
     lxc_config_file(args.fqdn, args.ram)
     lxc_inittab_file(args.fqdn)
+    lxc_hostname_file(args.fqdn)
     exit ()
 
 else:
+#    print "Creating a", myvars['Dist'], "lxc container for",  myvars['Cache'], myvars['Arch'], "Architecture"
      print "got caught by else so consider running with --help\n"
      print "printing variables so you can debug if needed\n"
      print parser.parse_args()
