@@ -11,15 +11,19 @@ Information
 - You can select the arch you want example 32-bit or 64-bit
 - It creates containers using lvm to isolate your containers on their own partitions
 - you can easily add packages you want to your initial cache in the script
+- it creates a custom inittab file
+- it creates a config file for your lxc container
 - Added option to define filesystem of choice example ext3/ext4/xfs etc..
 
 Future Additions (wish list)
 ============================
 - possibility to add profiles which can create finalized containers example web server etc...
+- make example usages in Readme more clear especially related to the features present
 - possibility to use ssh key to connect to container
 - add some serious error checking to lxc-pywizard
-- add option so container has his hostname defined based on fqdn
-- add option to configure static ip from command line
+- add option so container has his hostname defined based on fqdn on creation
+- add option to configure static ip from command line on creation
+- make cache directory layout more versatile to arch changes and distro releases
 
 Example Usage
 =============
