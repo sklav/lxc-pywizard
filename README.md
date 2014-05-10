@@ -10,6 +10,7 @@ Information
 - you can launch debian Squeeze and Wheezy containers and they work ;)
 - You can select the arch you want example 32-bit or 64-bit
 - It creates containers using lvm to isolate your containers on their own partitions
+- added option so container has his hostname defined based on fqdn on creation
 - you can easily add packages you want to your initial cache in the script
 - it creates a custom inittab file
 - it creates a config file for your lxc container
@@ -21,7 +22,6 @@ Future Additions (wish list)
 - make example usages in Readme more clear especially related to the features present
 - possibility to use ssh key to connect to container
 - add some serious error checking to lxc-pywizard
-- add option so container has his hostname defined based on fqdn on creation
 - add option to configure static ip from command line on creation
 - make cache directory layout more versatile to arch changes and distro releases
 
