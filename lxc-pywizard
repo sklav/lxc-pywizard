@@ -18,7 +18,7 @@ myvars = {
    'VGName':'Default',
    'Dist':'wheezy',
    'Arch':'amd64',
-   'Cache':'/var/cache/lxc/test123456/',
+   'Cache':'/var/cache/lxc/test/',
    'RemoteUrl':'http://ftp.ca.debian.org/debian',
    'Packages':'ifupdown,locales,libui-dialog-perl,dialog,netbase,net-tools,iproute,openssh-server,vim',
 }
@@ -47,35 +47,49 @@ from lxc_hostname_file import lxc_hostname_file
 ############################################
 
 if args.update == "True":
-    FNULL = open(os.devnull, 'w')
-    os.chdir( myvars['Cache'] )
-    os.chroot( myvars['Cache'] )
-    subprocess.call(['apt-get', 'update'],stdout=FNULL, stderr=subprocess.STDOUT)
-    subprocess.call(['apt-get', '-y', 'upgrade'])
-    #subprocess.call(['apt-get', '-y', 'install', 'less', 'wget'])
-    print "\n cache located at", myvars['Cache'], "has been updated \n"
+	if os.path.exists( myvars['Cache'] ) == True:
+		FNULL = open(os.devnull, 'w')
+		os.chdir( myvars['Cache'] )
+		os.chroot( myvars['Cache'] )
+		subprocess.call(['apt-get', 'update'],stdout=FNULL, stderr=subprocess.STDOUT)
+		subprocess.call(['apt-get', '-y', 'upgrade'])
+		print "\n cache located at", myvars['Cache'], "has been updated \n"
+	else:
+		print "No cache to update consider running lxc-pywizard --create first"
+		exit ()
 
 elif args.cache == "True":
     print "Cache is located", myvars['Cache'], "based on", myvars['Arch'], "Architecture"
 
 elif args.create == "True":
-    subprocess.call(['debootstrap', '--verbose', '--variant=minbase', '--arch='+myvars['Arch'], '--include='+myvars['Packages'], myvars['Dist'], myvars['Cache'], myvars['RemoteUrl']])
-    subprocess.call(['touch', myvars['Cache']+'etc/host'])
-    exit ()
+	if os.path.exists( myvars['Cache'] ) == True:
+		print "Cache Directory already exists.. Will not recreate it"
+		exit ()
+	else:
+		print "Creating cache directory", myvars['Cache'], " "
+		subprocess.call(['debootstrap', '--verbose', '--variant=minbase', '--arch='+myvars['Arch'], '--include='+myvars['Packages'], myvars['Dist'], myvars['Cache'], myvars['RemoteUrl']])
+		subprocess.call(['touch', myvars['Cache']+'etc/host'])
+		exit ()
+
 elif args.container == "True":
-    subprocess.call(['lvcreate', '-n', args.fqdn, '-L', args.size, myvars['VGName']])
-    subprocess.call(['mkdir', '/var/lib/lxc/'+args.fqdn])
-    f = open('/etc/fstab','a')
-    print >>f, "/dev/Default/"+args.fqdn, "/var/lib/lxc/"+args.fqdn, args.fs+"    noatime  0 2"
-    f.close()
-    subprocess.call(['mkfs.'+args.fs, '/dev/Default/'+args.fqdn])
-    subprocess.call(['mount', '/var/lib/lxc/'+args.fqdn])
-    subprocess.call(['mkdir', '/var/lib/lxc/'+args.fqdn+'/rootfs'])
-    subprocess.call(['rsync', '-azA', '--numeric-ids', myvars['Cache'], '/var/lib/lxc/'+args.fqdn+'/rootfs/'])
-    lxc_config_file(args.fqdn, args.ram)
-    lxc_inittab_file(args.fqdn)
-    lxc_hostname_file(args.fqdn)
-    exit ()
+	if os.path.exists( '/dev/'+myvars['VGName']+'/'+args.fqdn ) == True:
+		print "Looks like this lvm partition /dev/"+myvars['VGName']+"/"+args.fqdn, " already exists... exiting"
+		exit ()
+	else:
+		subprocess.call(['lvcreate', '-n', args.fqdn, '-L', args.size, myvars['VGName']])
+		subprocess.call(['mkdir', '/var/lib/lxc/'+args.fqdn])
+		f = open('/etc/fstab','a')
+		print >>f, "/dev/Default/"+args.fqdn, "/var/lib/lxc/"+args.fqdn, args.fs+"    noatime  0 2"
+		f.close()
+		subprocess.call(['mkfs.'+args.fs, '/dev/Default/'+args.fqdn])
+		subprocess.call(['mount', '/var/lib/lxc/'+args.fqdn])
+		subprocess.call(['mkdir', '/var/lib/lxc/'+args.fqdn+'/rootfs'])
+		subprocess.call(['rsync', '-azA', '--numeric-ids', myvars['Cache'], '/var/lib/lxc/'+args.fqdn+'/rootfs/'])
+		lxc_config_file(args.fqdn, args.ram)
+		lxc_inittab_file(args.fqdn)
+		lxc_hostname_file(args.fqdn)
+		print "container", args.fqdn, "has been created successfully"
+		exit ()
 
 else:
 #    print "Creating a", myvars['Dist'], "lxc container for",  myvars['Cache'], myvars['Arch'], "Architecture"
