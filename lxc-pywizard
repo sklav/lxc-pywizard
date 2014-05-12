@@ -14,7 +14,7 @@ import os
 
 ####VARIABLES###############################
 Dist = 'wheezy'
-Arch = 'i386' #i386 or amd64
+Arch = 'amd64' #i386 or amd64
 
 myvars = {
    'Os':'Debian',
