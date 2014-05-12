@@ -16,6 +16,7 @@ Information
 - it creates a config file for your lxc container
 - Added option to define filesystem of choice example ext3/ext4/xfs etc..
 - Added some basic error checking to lxc-pywizard as promised.
+- cache directory layout more versatile to arch changes and distro releases can now define based on release and arch example squeeze/wheezy/amd64/i386
 
 Future Additions (wish list)
 ============================
@@ -24,7 +25,7 @@ Future Additions (wish list)
 - possibility to use ssh key to connect to container
 - add some serious error checking to lxc-pywizard
 - add option to configure static ip from command line on creation
-- make cache directory layout more versatile to arch changes and distro releases- eliminate any hardcoded paths where possible
+- eliminate any unnecessary hardcoded paths where possible
 - possibility to make the scrip work with febootstrap, which would in theory add fedora and centos/rhel support to the script
 - Add version information for tracking purposes
 
