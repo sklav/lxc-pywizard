@@ -13,12 +13,13 @@ import argparse
 import os
 
 ####VARIABLES###############################
+Dist = 'wheezy'
+Arch = 'i386' #i386 or amd64
+
 myvars = {
    'Os':'Debian',
    'VGName':'Default',
-   'Dist':'wheezy',
-   'Arch':'amd64',
-   'Cache':'/var/cache/lxc/test/',
+   'Cache':'/var/cache/lxc/'+Dist+'/'+Arch+'/',
    'RemoteUrl':'http://ftp.ca.debian.org/debian',
    'Packages':'ifupdown,locales,libui-dialog-perl,dialog,netbase,net-tools,iproute,openssh-server,vim',
 }
@@ -53,13 +54,13 @@ if args.update == "True":
 		os.chroot( myvars['Cache'] )
 		subprocess.call(['apt-get', 'update'],stdout=FNULL, stderr=subprocess.STDOUT)
 		subprocess.call(['apt-get', '-y', 'upgrade'])
-		print "\n cache located at", myvars['Cache'], "has been updated \n"
+		print "\ncurrently active cache located at", myvars['Cache'], "has been updated \n"
 	else:
 		print "No cache to update consider running lxc-pywizard --create first"
 		exit ()
 
 elif args.cache == "True":
-    print "Cache is located", myvars['Cache'], "based on", myvars['Arch'], "Architecture"
+    print "Currently active cache is located", myvars['Cache'], "based on", Arch, "Architecture"
 
 elif args.create == "True":
 	if os.path.exists( myvars['Cache'] ) == True:
@@ -67,7 +68,7 @@ elif args.create == "True":
 		exit ()
 	else:
 		print "Creating cache directory", myvars['Cache'], " "
-		subprocess.call(['debootstrap', '--verbose', '--variant=minbase', '--arch='+myvars['Arch'], '--include='+myvars['Packages'], myvars['Dist'], myvars['Cache'], myvars['RemoteUrl']])
+		subprocess.call(['debootstrap', '--verbose', '--variant=minbase', '--arch='+Arch, '--include='+myvars['Packages'], Dist, myvars['Cache'], myvars['RemoteUrl']])
 		subprocess.call(['touch', myvars['Cache']+'etc/host'])
 		exit ()
 
