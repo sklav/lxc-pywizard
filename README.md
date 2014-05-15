@@ -17,6 +17,7 @@ Information
 - Added option to define filesystem of choice example ext3/ext4/xfs etc..
 - Added some basic error checking to lxc-pywizard as promised.
 - cache directory layout more versatile to arch changes and distro releases can now define based on release and arch example squeeze/wheezy/amd64/i386
+- Version information has been added.
 
 Future Additions (wish list)
 ============================
@@ -27,15 +28,18 @@ Future Additions (wish list)
 - add option to configure static ip from command line on creation
 - eliminate any unnecessary hardcoded paths where possible
 - possibility to make the scrip work with febootstrap, which would in theory add fedora and centos/rhel support to the script
-- Add version information for tracking purposes
+- make lvm optional for those that prefer options
 
 Example Usage
 =============
 create a cache for containers to use.
-lxc-pywizard --create
+lxc-pywizard --create | -cr
 
 Update the cache
 lxc-pywizard -u or --update
 
 launch a container by defining some basics
-./lxc-pywizard -cont --fqdn=test4.sklav --ram=512 --size=4G --fs=ext3
+lxc-pywizard --container | -cont --fqdn=test4.sklav --ram=512 --size=4G --fs=ext3
+
+Display version information
+lxc-pywizard --version | -v | -V
