@@ -22,7 +22,7 @@ Information
 Future Additions (wish list)
 ============================
 - possibility to add profiles which can create finalized containers example web server etc...
-- make example usages in Readme more clear especially related to the features present
+- make example usages in Readme more clear especially related to the features present and fix formating of readme
 - possibility to use ssh key to connect to container
 - add some serious error checking to lxc-pywizard
 - add option to configure static ip from command line on creation
