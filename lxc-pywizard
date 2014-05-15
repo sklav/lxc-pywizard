@@ -13,10 +13,11 @@ import argparse
 import os
 
 ####VARIABLES###############################
-Dist = 'wheezy'
+Dist = 'wheezy' # OS codename
 Arch = 'amd64' #i386 or amd64
 
 myvars = {
+   'Version':'0.7',
    'Os':'Debian',
    'VGName':'Default',
    'Cache':'/var/cache/lxc/'+Dist+'/'+Arch+'/',
@@ -36,6 +37,7 @@ parser.add_argument('--fqdn', '-fqdn', help='fqdn help')
 parser.add_argument('--size', '-size', help='disk size help')
 parser.add_argument('--ram', '-ram', help='ram size help')
 parser.add_argument('--fs', '-fs', action="store", default="ext4", help='filesystem type exmaple ext4')
+parser.add_argument("--version", "-v", "-V", action="store_const", const="True")
 #parser.add_argument("help", help="The message to repeat", type=str)
 args = parser.parse_args()
 
@@ -91,6 +93,10 @@ elif args.container == "True":
 		lxc_hostname_file(args.fqdn)
 		print "container", args.fqdn, "has been created successfully"
 		exit ()
+
+elif args.version == "True":
+    print "lxc-pywizard version", myvars['Version']
+    exit ()
 
 else:
 #    print "Creating a", myvars['Dist'], "lxc container for",  myvars['Cache'], myvars['Arch'], "Architecture"
