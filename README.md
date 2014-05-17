@@ -18,6 +18,8 @@ Information
 - Added some basic error checking to lxc-pywizard as promised.
 - cache directory layout more versatile to arch changes and distro releases can now define based on release and arch example squeeze/wheezy/amd64/i386
 - Version information has been added.
+- Better Help messages added.
+- Some sane defaults have been added to ram and fs options which now default to  ram=512M and fs=2G
 
 Future Additions (wish list)
 ============================
