@@ -15,8 +15,8 @@ lxc.network.link = br0
 lxc.tty = 1
 lxc.pts = 1024
 #Memory
-lxc.cgroup.memory.limit_in_bytes = {ram}M
-lxc.cgroup.memory.memsw.limit_in_bytes = {ram}M
+lxc.cgroup.memory.limit_in_bytes = {ram}
+lxc.cgroup.memory.memsw.limit_in_bytes = {ram}
 lxc.cgroup.blkio.weight = 100
 # Lxc isolation
 #lxc.cap.drop = sys_module mac_admin mac_override sys_time sys_admin
