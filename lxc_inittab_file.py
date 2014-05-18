@@ -1,7 +1,7 @@
 def lxc_inittab_file(fqdn):
     "This generates an inittab config for lxc containers"
     filename = '/var/lib/lxc/{fqdn}/rootfs/etc/inittab'.format(fqdn=fqdn)
-    with open(filename, 'a') as f:
+    with open(filename, 'w') as f:
         f.write(inittab.format(fqdn=fqdn))
 
 inittab = """id:3:initdefault:
