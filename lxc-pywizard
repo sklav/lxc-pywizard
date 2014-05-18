@@ -37,7 +37,7 @@ parser.add_argument('-fqdn', '--fqdn', help='fully qualifies domain name require
 parser.add_argument('-size', '--size', action="store", default="2G", help='disk size specified with M or G')
 parser.add_argument('-ram', '--ram', action="store", default="512M", help='ram size specified with M or G')
 parser.add_argument('-fs', '--fs', action="store", default="ext4", help='filesystem type exmaple ext4 ext3 xfs')
-parser.add_argument("-v", "-V", "-version", action="store_const", const="True", help='displays version information')
+parser.add_argument("-v", "-V", "--version", action="store_const", const="True", help='displays version information')
 #parser.add_argument("help", help="The message to repeat", type=str)
 args = parser.parse_args()
 
