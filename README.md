@@ -22,10 +22,10 @@ Information
 - Some sane defaults have been added to ram and fs options which now default to  ram=512M and fs=2G
 - eliminated unnecessary hardcoded paths in script
 - made lvm optional --lvm=yes Default or --lvm=no option was there but not usable
+- Added error check if the cache directory is missing or not created when using the -c option
 
 Future Additions (wish list)
 ============================
-- Add some error checking if the cache directory does not exist when asking location of the cache file using the -c option
 - possibility to add profiles which can create finalized containers example web server etc...
 - make example usages in Readme more clear especially related to the features present and fix formating of readme
 - possibility to use ssh key to connect to container
