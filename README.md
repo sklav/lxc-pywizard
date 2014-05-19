@@ -25,6 +25,7 @@ Information
 
 Future Additions (wish list)
 ============================
+- Add some errro checking if the cache directory does not exist when asking location of the cache file using the -c option
 - possibility to add profiles which can create finalized containers example web server etc...
 - make example usages in Readme more clear especially related to the features present and fix formating of readme
 - possibility to use ssh key to connect to container
