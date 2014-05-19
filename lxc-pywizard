@@ -63,7 +63,12 @@ if args.update == "True":
 		exit ()
 
 elif args.cache == "True":
-    print "Currently active cache is located", myvars['Cache'], "based on", Arch, "Architecture"
+	if os.path.exists( myvars['Cache'] ) == False:
+                print "Cache Directory does not exists.. consider running lxc-pywizard --create first"
+                exit ()
+        else:
+        	print "Currently active cache is located", myvars['Cache'], "based on", Arch, "Architecture"
+        	exit ()
 
 elif args.create == "True":
 	if os.path.exists( myvars['Cache'] ) == True:
