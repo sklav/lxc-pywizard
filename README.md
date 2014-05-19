@@ -20,6 +20,8 @@ Information
 - Version information has been added.
 - Better Help messages added.
 - Some sane defaults have been added to ram and fs options which now default to  ram=512M and fs=2G
+- eliminated unnecessary hardcoded paths in script
+- made lvm optional --lvm=yes Default or --lvm=no option was there but not usable
 
 Future Additions (wish list)
 ============================
@@ -28,20 +30,26 @@ Future Additions (wish list)
 - possibility to use ssh key to connect to container
 - add some serious error checking to lxc-pywizard
 - add option to configure static ip from command line on creation
-- eliminate any unnecessary hardcoded paths where possible
 - possibility to make the scrip work with febootstrap, which would in theory add fedora and centos/rhel support to the script
-- make lvm optional for those that prefer options
 
 Example Usage
 =============
 create a cache for containers to use.
+-------------------------------------
 lxc-pywizard --create | -cr
 
 Update the cache
+----------------
 lxc-pywizard -u or --update
 
 launch a container by defining some basics
+------------------------------------------
 lxc-pywizard --container | -cont --fqdn=test4.sklav --ram=512 --size=4G --fs=ext3
 
+Create a container using defaults and no lvm partition
+------------------------------------------------------
+lxc-pywizard --container | -cont --fqdn=test4.sklav --lvm=no
+
 Display version information
+---------------------------
 lxc-pywizard --version | -v | -V
