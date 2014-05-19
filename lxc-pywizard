@@ -20,6 +20,7 @@ myvars = {
    'Version':'0.7',
    'Os':'Debian',
    'VGName':'Default',
+   'ContainerLocation':'/var/lib/lxc/',
    'Cache':'/var/cache/lxc/'+Dist+'/'+Arch+'/',
    'RemoteUrl':'http://ftp.ca.debian.org/debian',
    'Packages':'ifupdown,locales,libui-dialog-perl,dialog,netbase,net-tools,iproute,openssh-server,vim',
@@ -32,11 +33,11 @@ parser.add_argument("-u", "--update", action="store_const", const="True", help='
 parser.add_argument("-cr", "--create", action="store_const", const="True", help='creates the cached image needed by lxc-pywizard')
 parser.add_argument("-c", "--cache", action="store_const", const="True", help='prints location of current cache')
 parser.add_argument("-cnt", "--container", action="store_const", const="True", help='required trigger to create a container')
-parser.add_argument('-lvm', '--lvm', help='lvm help')
+parser.add_argument('-lvm', '--lvm', action="store", default="yes", help='use lvm for container default is yes other option in no')
 parser.add_argument('-fqdn', '--fqdn', help='fully qualifies domain name required')
-parser.add_argument('-size', '--size', action="store", default="2G", help='disk size specified with M or G')
-parser.add_argument('-ram', '--ram', action="store", default="512M", help='ram size specified with M or G')
-parser.add_argument('-fs', '--fs', action="store", default="ext4", help='filesystem type exmaple ext4 ext3 xfs')
+parser.add_argument('-size', '--size', action="store", default="2G", help='disk size specified with M or G default is 2G')
+parser.add_argument('-ram', '--ram', action="store", default="512M", help='ram size specified with M or G default is 512M')
+parser.add_argument('-fs', '--fs', action="store", default="ext4", help='filesystem type example ext4 ext3 xfs default is ext4')
 parser.add_argument("-v", "-V", "--version", action="store_const", const="True", help='displays version information')
 #parser.add_argument("help", help="The message to repeat", type=str)
 args = parser.parse_args()
@@ -74,25 +75,39 @@ elif args.create == "True":
 		subprocess.call(['touch', myvars['Cache']+'etc/host'])
 		exit ()
 
-elif args.container == "True":
+elif args.container == "True" and args.lvm == "yes":
 	if os.path.exists( '/dev/'+myvars['VGName']+'/'+args.fqdn ) == True:
 		print "Looks like this lvm partition /dev/"+myvars['VGName']+"/"+args.fqdn, " already exists... exiting"
 		exit ()
 	else:
 		subprocess.call(['lvcreate', '-n', args.fqdn, '-L', args.size, myvars['VGName']])
-		subprocess.call(['mkdir', '/var/lib/lxc/'+args.fqdn])
+		subprocess.call(['mkdir', myvars['ContainerLocation']+args.fqdn])
 		f = open('/etc/fstab','a')
-		print >>f, "/dev/Default/"+args.fqdn, "/var/lib/lxc/"+args.fqdn, args.fs+"    noatime  0 2"
+		print >>f, "/dev/"+myvars['VGName']+"/"+args.fqdn, myvars['ContainerLocation']+args.fqdn, args.fs+"    noatime  0 2"
 		f.close()
-		subprocess.call(['mkfs.'+args.fs, '/dev/Default/'+args.fqdn])
-		subprocess.call(['mount', '/var/lib/lxc/'+args.fqdn])
-		subprocess.call(['mkdir', '/var/lib/lxc/'+args.fqdn+'/rootfs'])
-		subprocess.call(['rsync', '-azA', '--numeric-ids', myvars['Cache'], '/var/lib/lxc/'+args.fqdn+'/rootfs/'])
+		subprocess.call(['mkfs.'+args.fs, "/dev/"+myvars['VGName']+"/"+args.fqdn])
+		subprocess.call(['mount', myvars['ContainerLocation']+args.fqdn])
+		subprocess.call(['mkdir', myvars['ContainerLocation']+args.fqdn+'/rootfs'])
+		subprocess.call(['rsync', '-azA', '--numeric-ids', myvars['Cache'], myvars['ContainerLocation']+args.fqdn+'/rootfs/'])
 		lxc_config_file(args.fqdn, args.ram)
 		lxc_inittab_file(args.fqdn)
 		lxc_hostname_file(args.fqdn)
 		print "container", args.fqdn, "has been created successfully"
 		exit ()
+
+elif args.container == 'True' and args.lvm == 'no':
+	if os.path.exists( myvars['ContainerLocation']+args.fqdn ) == True:
+                print "Looks like this container", myvars['ContainerLocation']+args.fqdn, "already exists... exiting"
+                exit ()
+        else:
+                subprocess.call(['mkdir', myvars['ContainerLocation']+args.fqdn])
+                subprocess.call(['mkdir', myvars['ContainerLocation']+args.fqdn+'/rootfs'])
+                subprocess.call(['rsync', '-azA', '--numeric-ids', myvars['Cache'], myvars['ContainerLocation']+args.fqdn+'/rootfs/'])
+                lxc_config_file(args.fqdn, args.ram)
+                lxc_inittab_file(args.fqdn)
+                lxc_hostname_file(args.fqdn)
+                print "container", args.fqdn, "has been created successfully"
+                exit ()
 
 elif args.version == "True":
     print "lxc-pywizard version", myvars['Version']
