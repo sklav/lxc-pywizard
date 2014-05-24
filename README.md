@@ -23,6 +23,7 @@ Information
 	- eliminated unnecessary hardcoded paths in script
 	- made lvm optional --lvm=yes Default or --lvm=no option was there but not usable
 	- Added error check if the cache directory is missing or not created when using the -c option
+	- Added new option to create a password when generating the cache. new options -pass --password can be used in conjuction with the --create option default password is root
 
 Future Additions (wish list)
 ============================
@@ -35,9 +36,9 @@ Future Additions (wish list)
 
 Example Usage
 =============
-create a cache for containers to use.
+create a cache for containers to use also can define password.
 -
-	lxc-pywizard --create | -cr
+	lxc-pywizard --create | -cr | -pass | --password
 
 Update the cache
 -
