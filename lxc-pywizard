@@ -23,7 +23,7 @@ myvars = {
    'ContainerLocation':'/var/lib/lxc/',
    'Cache':'/var/cache/lxc/'+Dist+'/'+Arch+'/',
    'RemoteUrl':'http://ftp.ca.debian.org/debian',
-   'Packages':'ifupdown,locales,libui-dialog-perl,dialog,netbase,net-tools,iproute,openssh-server,vim',
+   'Packages':'ifupdown,locales,libui-dialog-perl,less,dialog,netbase,net-tools,iproute,openssh-server,vim',
 }
 
 ####ARGS####################################
@@ -38,6 +38,7 @@ parser.add_argument('-fqdn', '--fqdn', help='fully qualifies domain name require
 parser.add_argument('-size', '--size', action="store", default="2G", help='disk size specified with M or G default is 2G')
 parser.add_argument('-ram', '--ram', action="store", default="512M", help='ram size specified with M or G default is 512M')
 parser.add_argument('-fs', '--fs', action="store", default="ext4", help='filesystem type example ext4 ext3 xfs default is ext4')
+parser.add_argument('-pass', '--password', action="store", default="root", help='set a password for root when creating cache default is root')
 parser.add_argument("-v", "-V", "--version", action="store_const", const="True", help='displays version information')
 #parser.add_argument("help", help="The message to repeat", type=str)
 args = parser.parse_args()
@@ -78,6 +79,14 @@ elif args.create == "True":
 		print "Creating cache directory", myvars['Cache'], " "
 		subprocess.call(['debootstrap', '--verbose', '--variant=minbase', '--arch='+Arch, '--include='+myvars['Packages'], Dist, myvars['Cache'], myvars['RemoteUrl']])
 		subprocess.call(['touch', myvars['Cache']+'etc/host'])
+                os.chdir( myvars['Cache'] )
+                os.chroot( myvars['Cache'] )
+                p = args.password
+		PASWD = 'root:'+ p + ''
+                p1 = subprocess.Popen(['echo', '-e', PASWD], stdout=subprocess.PIPE)
+                p2 = subprocess.Popen(['chpasswd'], stdin=p1.stdout)
+                output = p2.communicate()
+		print 'Your default password for this cache is:', p
 		exit ()
 
 elif args.container == "True" and args.lvm == "yes":
