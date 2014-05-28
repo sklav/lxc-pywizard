@@ -19,11 +19,13 @@ Arch = 'amd64' #i386 or amd64
 myvars = {
    'Version':'0.7',
    'Os':'Debian',
+   'Locale':'en_US.UTF-8 UTF-8',
+   'Tzdata':'America/Montreal',
    'VGName':'Default',
    'ContainerLocation':'/var/lib/lxc/',
    'Cache':'/var/cache/lxc/'+Dist+'/'+Arch+'/',
    'RemoteUrl':'http://ftp.ca.debian.org/debian',
-   'Packages':'ifupdown,locales,libui-dialog-perl,less,dialog,netbase,net-tools,iproute,openssh-server,vim',
+   'Packages':'ifupdown,isc-dhcp-client,locales,libui-dialog-perl,less,dialog,netbase,net-tools,iproute,openssh-server,vim',
 }
 
 ####ARGS####################################
@@ -87,6 +89,17 @@ elif args.create == "True":
                 p2 = subprocess.Popen(['chpasswd'], stdin=p1.stdout)
                 output = p2.communicate()
 		print 'Your default password for this cache is:', p
+		FNULL = open(os.devnull, 'w')
+		locale = open('/etc/locale.gen','w')
+		print >>locale, myvars['Locale']
+		locale.close()
+		subprocess.call(['locale-gen'], stdout=FNULL, stderr=subprocess.STDOUT)
+		print "\nLocale:", myvars['Locale']
+		tzdata = open('/etc/timezone','w')
+		print >>tzdata, myvars['Tzdata']
+		tzdata.close()
+		print "\nTimezone:", myvars['Tzdata']
+		subprocess.call(['dpkg-reconfigure', '-f', 'noninteractive', 'tzdata'], stdout=FNULL, stderr=subprocess.STDOUT)
 		exit ()
 
 elif args.container == "True" and args.lvm == "yes":
