@@ -32,7 +32,6 @@ Future Additions (wish list)
 	- possibility to use ssh key to connect to container
 	- add some serious error checking to lxc-pywizard
 	- add option to configure static ip from command line on creation
-	- possibility to make the scrip work with febootstrap, which would in theory add fedora and centos/rhel support to the script
 
 Example Usage
 =============
