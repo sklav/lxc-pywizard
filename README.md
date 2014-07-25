@@ -24,6 +24,8 @@ Information
 	- made lvm optional --lvm=yes Default or --lvm=no option was there but not usable
 	- Added error check if the cache directory is missing or not created when using the -c option
 	- Added new option to create a password when generating the cache. new options -pass --password can be used in conjuction with the --create option default password is root
+        - Fixed some typo's in the README examples
+
 
 Future Additions (wish list)
 ============================
@@ -45,11 +47,11 @@ Update the cache
 
 launch a container by defining some basics
 -
-	lxc-pywizard --container | -cont --fqdn=test4.sklav --ram=512 --size=4G --fs=ext3
+	lxc-pywizard --container | -cont --fqdn=test4.sklav --ram=512M --size=4G --fs=ext3
 
 Create a container using defaults and no lvm partition
 -
-	lxc-pywizard --container | -cont --fqdn=test4.sklav --lvm=no
+	lxc-pywizard --container | --cont --fqdn=test4.sklav --lvm=no
 
 Display version information
 -
