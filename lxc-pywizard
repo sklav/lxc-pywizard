@@ -3,7 +3,8 @@
 ##################################################################
 #                                                                #
 # Copyright (C) 2014 Nick Sklavenitis                            #
-# Work in progress it will break things you have been warned.    #
+# Use at your own risk and peril. Seriously i take no            #
+# responsibility you been warned.                                #
 #                                                                #
 ##################################################################
 
@@ -18,6 +19,7 @@ Arch = 'amd64' #i386 or amd64
 
 myvars = {
    'Version':'0.7',
+   'PATHENV':'/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin',
    'Os':'Debian',
    'Locale':'en_US.UTF-8 UTF-8',
    'Tzdata':'America/Montreal',
@@ -25,7 +27,7 @@ myvars = {
    'ContainerLocation':'/var/lib/lxc/',
    'Cache':'/var/cache/lxc/'+Dist+'/'+Arch+'/',
    'RemoteUrl':'http://ftp.ca.debian.org/debian',
-   'Packages':'ifupdown,isc-dhcp-client,locales,libui-dialog-perl,less,dialog,netbase,net-tools,iproute,openssh-server,vim',
+   'Packages':'inetutils-ping,ifupdown,isc-dhcp-client,locales,libui-dialog-perl,less,dialog,netbase,net-tools,iproute,openssh-server,vim',
 }
 
 ####ARGS####################################
@@ -58,9 +60,9 @@ if args.update == "True":
 		FNULL = open(os.devnull, 'w')
 		os.chdir( myvars['Cache'] )
 		os.chroot( myvars['Cache'] )
-		subprocess.call(['apt-get', 'update'],stdout=FNULL, stderr=subprocess.STDOUT)
-		subprocess.call(['apt-get', '-y', 'upgrade'])
-		print "\ncurrently active cache located at", myvars['Cache'], "has been updated \n"
+		subprocess.call(['apt-get', 'update'],stdout=FNULL, stderr=subprocess.STDOUT, env={ 'PATH': myvars['PATHENV'] })
+		subprocess.call(['apt-get', '-y', 'upgrade'], env={ 'PATH': myvars['PATHENV'] })
+		print "\ncurrent active cache located at", myvars['Cache'], "has been updated \n"
 	else:
 		print "No cache to update consider running lxc-pywizard --create first"
 		exit ()
@@ -70,7 +72,7 @@ elif args.cache == "True":
                 print "Cache Directory does not exists.. consider running lxc-pywizard --create first"
                 exit ()
         else:
-        	print "Currently active cache is located", myvars['Cache'], "based on", Arch, "Architecture"
+        	print "Current active cache is located", myvars['Cache'], "based on", Arch, "Architecture"
         	exit ()
 
 elif args.create == "True":
@@ -79,27 +81,27 @@ elif args.create == "True":
 		exit ()
 	else:
 		print "Creating cache directory", myvars['Cache'], " "
-		subprocess.call(['debootstrap', '--verbose', '--variant=minbase', '--arch='+Arch, '--include='+myvars['Packages'], Dist, myvars['Cache'], myvars['RemoteUrl']])
-		subprocess.call(['touch', myvars['Cache']+'etc/host'])
+		subprocess.call(['debootstrap', '--verbose', '--variant=minbase', '--arch='+Arch, '--include='+myvars['Packages'], Dist, myvars['Cache'], myvars['RemoteUrl']], env={ 'PATH': myvars['PATHENV']})
+		subprocess.call(['touch', myvars['Cache']+'etc/host'], env={ 'PATH': myvars['PATHENV']})
                 os.chdir( myvars['Cache'] )
                 os.chroot( myvars['Cache'] )
                 p = args.password
 		PASWD = 'root:'+ p + ''
-                p1 = subprocess.Popen(['echo', '-e', PASWD], stdout=subprocess.PIPE)
-                p2 = subprocess.Popen(['chpasswd'], stdin=p1.stdout)
+                p1 = subprocess.Popen(['echo', '-e', PASWD], stdout=subprocess.PIPE, env={ 'PATH': myvars['PATHENV']})
+                p2 = subprocess.Popen(['chpasswd'], stdin=p1.stdout, stderr=subprocess.PIPE, env={ 'PATH': myvars['PATHENV']})
                 output = p2.communicate()
 		print 'Your default password for this cache is:', p
 		FNULL = open(os.devnull, 'w')
 		locale = open('/etc/locale.gen','w')
 		print >>locale, myvars['Locale']
 		locale.close()
-		subprocess.call(['locale-gen'], stdout=FNULL, stderr=subprocess.STDOUT)
+		subprocess.call(['locale-gen'], stdout=FNULL, stderr=subprocess.STDOUT, env={ 'PATH': myvars['PATHENV']})
 		print "\nLocale:", myvars['Locale']
 		tzdata = open('/etc/timezone','w')
 		print >>tzdata, myvars['Tzdata']
 		tzdata.close()
 		print "\nTimezone:", myvars['Tzdata']
-		subprocess.call(['dpkg-reconfigure', '-f', 'noninteractive', 'tzdata'], stdout=FNULL, stderr=subprocess.STDOUT)
+		subprocess.call(['dpkg-reconfigure', '-f', 'noninteractive', 'tzdata'], stdout=FNULL, stderr=subprocess.STDOUT, env={ 'PATH': myvars['PATHENV']})
 		exit ()
 
 elif args.container == "True" and args.lvm == "yes":
@@ -107,15 +109,15 @@ elif args.container == "True" and args.lvm == "yes":
 		print "Looks like this lvm partition /dev/"+myvars['VGName']+"/"+args.fqdn, " already exists... exiting"
 		exit ()
 	else:
-		subprocess.call(['lvcreate', '-n', args.fqdn, '-L', args.size, myvars['VGName']])
-		subprocess.call(['mkdir', myvars['ContainerLocation']+args.fqdn])
+		subprocess.call(['lvcreate', '-n', args.fqdn, '-L', args.size, myvars['VGName']], env={ 'PATH': myvars['PATHENV']})
+		subprocess.call(['mkdir', myvars['ContainerLocation']+args.fqdn], env={ 'PATH': myvars['PATHENV']})
 		f = open('/etc/fstab','a')
 		print >>f, "/dev/"+myvars['VGName']+"/"+args.fqdn, myvars['ContainerLocation']+args.fqdn, args.fs+"    noatime  0 2"
 		f.close()
-		subprocess.call(['mkfs.'+args.fs, "/dev/"+myvars['VGName']+"/"+args.fqdn])
-		subprocess.call(['mount', myvars['ContainerLocation']+args.fqdn])
-		subprocess.call(['mkdir', myvars['ContainerLocation']+args.fqdn+'/rootfs'])
-		subprocess.call(['rsync', '-azA', '--numeric-ids', myvars['Cache'], myvars['ContainerLocation']+args.fqdn+'/rootfs/'])
+		subprocess.call(['mkfs.'+args.fs, "/dev/"+myvars['VGName']+"/"+args.fqdn], env={ 'PATH': myvars['PATHENV']})
+		subprocess.call(['mount', myvars['ContainerLocation']+args.fqdn], env={ 'PATH': myvars['PATHENV']})
+		subprocess.call(['mkdir', myvars['ContainerLocation']+args.fqdn+'/rootfs'], env={ 'PATH': myvars['PATHENV']})
+		subprocess.call(['rsync', '-azA', '--numeric-ids', myvars['Cache'], myvars['ContainerLocation']+args.fqdn+'/rootfs/'], env={ 'PATH': myvars['PATHENV']})
 		lxc_config_file(args.fqdn, args.ram)
 		lxc_inittab_file(args.fqdn)
 		lxc_hostname_file(args.fqdn)
@@ -127,9 +129,9 @@ elif args.container == 'True' and args.lvm == 'no':
                 print "Looks like this container", myvars['ContainerLocation']+args.fqdn, "already exists... exiting"
                 exit ()
         else:
-                subprocess.call(['mkdir', myvars['ContainerLocation']+args.fqdn])
-                subprocess.call(['mkdir', myvars['ContainerLocation']+args.fqdn+'/rootfs'])
-                subprocess.call(['rsync', '-azA', '--numeric-ids', myvars['Cache'], myvars['ContainerLocation']+args.fqdn+'/rootfs/'])
+                subprocess.call(['mkdir', myvars['ContainerLocation']+args.fqdn], env={ 'PATH': myvars['PATHENV']})
+                subprocess.call(['mkdir', myvars['ContainerLocation']+args.fqdn+'/rootfs'], env={ 'PATH': myvars['PATHENV']})
+                subprocess.call(['rsync', '-azA', '--numeric-ids', myvars['Cache'], myvars['ContainerLocation']+args.fqdn+'/rootfs/'], env={ 'PATH': myvars['PATHENV']})
                 lxc_config_file(args.fqdn, args.ram)
                 lxc_inittab_file(args.fqdn)
                 lxc_hostname_file(args.fqdn)
@@ -141,7 +143,6 @@ elif args.version == "True":
     exit ()
 
 else:
-#    print "Creating a", myvars['Dist'], "lxc container for",  myvars['Cache'], myvars['Arch'], "Architecture"
      print "got caught by else so consider running with --help\n"
      print "printing variables so you can debug if needed\n"
      print parser.parse_args()
