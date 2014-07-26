@@ -3,6 +3,12 @@ lxc-pywizard
 
 python wrapper script to launch lxc container
 
+Dependencies
+============
+	- Debian or Centos (tested)
+	- python 2.7 (tested)
+	- debootstrap
+
 Information
 ============
 	- This is a Work in progress so i take no responsibility if your system(s) break
@@ -24,7 +30,8 @@ Information
 	- made lvm optional --lvm=yes Default or --lvm=no option was there but not usable
 	- Added error check if the cache directory is missing or not created when using the -c option
 	- Added new option to create a password when generating the cache. new options -pass --password can be used in conjuction with the --create option default password is root
-        - Fixed some typo's in the README examples
+	- Fixed some typo's in the README examples
+	- Should now be more portable confirmed working on Debian and Centos
 
 
 Future Additions (wish list)
@@ -33,7 +40,7 @@ Future Additions (wish list)
 	- make example usages in Readme more clear especially related to the features present and fix formating of readme
 	- possibility to use ssh key to connect to container
 	- add some serious error checking to lxc-pywizard
-	- add option to configure static ip from command line on creation
+	- add option to configure static ip or DHCP from command line during creation
 
 Example Usage
 =============
@@ -47,11 +54,11 @@ Update the cache
 
 launch a container by defining some basics
 -
-	lxc-pywizard --container | -cont --fqdn=test4.sklav --ram=512M --size=4G --fs=ext3
+	lxc-pywizard --container | -cnt --fqdn=test4.sklav --ram=512M --size=4G --fs=ext3
 
 Create a container using defaults and no lvm partition
 -
-	lxc-pywizard --container | --cont --fqdn=test4.sklav --lvm=no
+	lxc-pywizard --container | -cnt --fqdn=test4.sklav --lvm=no
 
 Display version information
 -
