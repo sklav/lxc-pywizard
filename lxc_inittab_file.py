@@ -20,4 +20,5 @@ z6:6:respawn:/sbin/sulogin
 #c2:12345:respawn:/sbin/getty 38400 tty2 linux
 #c3:12345:respawn:/sbin/getty 38400 tty3 linux
 #c4:12345:respawn:/sbin/getty 38400 tty4 linux
+p0::powerfail:/sbin/init 0
 """
