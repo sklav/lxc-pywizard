@@ -32,6 +32,7 @@ Information
 	- Added new option to create a password when generating the cache. new options -pass --password can be used in conjuction with the --create option default password is root
 	- Fixed some typo's in the README examples
 	- Should now be more portable confirmed working on Debian and Centos
+	- Fixed inittab template to handle the new way lxc-stop powers down containers
 
 
 Future Additions (wish list)
